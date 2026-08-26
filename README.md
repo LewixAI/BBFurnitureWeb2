@@ -5,6 +5,8 @@ Sdn Bhd), rebuilt to the structure and design system of **fermliving.com**
 instead of District Eight. The first version lives at
 [`../BBFurnitureWeb`](../BBFurnitureWeb) and is untouched.
 
+**Live: https://lewixai.github.io/BBFurnitureWeb2/**
+
 Same client, same photography, a different reference — so the two can be shown
 side by side.
 
@@ -14,7 +16,33 @@ npm run organize      # assets/library/  ← the semantic image tree
 npm run images        # public/img/      ← responsive derivatives + manifest
 npm run dev           # localhost:5191
 npm run build         # dist/
-npm run verify        # 146 checks against a running server
+npm run verify        # 148 checks against a running server
+```
+
+## Deploying
+
+GitHub Pages on a free org serves a project repo from a **subpath**, so the
+build has to know it:
+
+```bash
+BASE_PATH=/BBFurnitureWeb2 npm run build
+touch dist/.nojekyll
+bash scripts/deploy-pages.sh          # pushes dist/ to the gh-pages branch
+```
+
+`BASE_PATH` prefixes every root-relative URL the templates write — `/img/…`,
+`/collections/…`, `/fonts/…`, and the runtime `fetch()` calls — in one pass
+(`withBase()` in `scripts/render.mjs`, `import.meta.env.BASE_URL` in the JS).
+`/src/…` is deliberately left alone: Vite resolves those itself and applies its
+own base, and a pre-prefixed path is one it cannot find.
+
+Leave `BASE_PATH` unset for the dev server or for a custom-domain deploy.
+
+Verify the deployed site, not a local stand-in:
+
+```bash
+BASE_URL=https://lewixai.github.io BASE_PATH=/BBFurnitureWeb2 \
+  node scripts/verify.mjs --root=dist
 ```
 
 ---
@@ -116,12 +144,20 @@ not just the dev server:
 
 | sweep | what it does | count |
 |---|---|---|
-| `links` | resolves every internal href and every image/font URL | 65 + 3112 |
+| `links` | resolves every internal href and every image/font URL | 65 + 3113 |
 | `layout` | 8 widths × 13 page types, looking for sideways scroll | 104 |
 | `touch` | 390×844 with `hasTouch`, `page.tap()`, no mouse | 9 |
 | `ui` | header, mega menu, rails, cart, wishlist, sort, search, accordions, sticky panel, console errors | 31 |
 
-**146 passed, 0 failed.**
+`--root` says which directory the server is actually serving. It matters: with
+it unset the sweep read the project root while `dist/` was being served, and
+those copies still point at `/src/styles/index.css`, which only the dev server
+has. The asset filter had the same shape of bug — written for `/img/`, it
+matched nothing once the URLs became `/BBFurnitureWeb2/img/` and reported a
+clean pass over an empty set. Both now assert that they found something to
+check before asserting that it resolved.
+
+**148 passed, 0 failed** — locally and against the deployed site.
 
 ### Five defects the checks found that screenshots did not
 
@@ -178,4 +214,6 @@ scripts/
 61 pages: home, 8 collections, 16 products, 26 projects, 4 rooms, about,
 materials, contact, wishlist, 404. **33 kB CSS, 14.8 kB JS (5 kB gzipped).**
 
-Not deployed.
+Deployed to GitHub Pages from the `gh-pages` branch (the built site), with
+`main` holding the source. The repo is **public** because Pages on a free org
+cannot serve a private repo.

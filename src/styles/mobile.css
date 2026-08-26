@@ -1,0 +1,161 @@
+/**
+ * Phone and tablet. The reference's breakpoints are 768 (tab_p) and 1024
+ * (tab_l); these match. Everything here was checked with a finger, not a
+ * mouse — see scripts/mobile.mjs.
+ */
+
+/* ── Below 1024: no inline nav or language picker, burger instead ───────── */
+@media (max-width: 1023px) {
+  .header__menu,
+  .header__lang,
+  .megamenu { display: none; }
+
+  /* Below the desktop breakpoint the twelve-column split leaves the tools
+     roughly 180px, which is not enough for three words and a burger — they
+     overlapped badly enough that the burger could not be tapped at all. The
+     row becomes a plain flex line and the labels become icons, which is what
+     the reference does too. */
+  .header__inner { display: flex; align-items: center; justify-content: space-between; }
+  .header__left,
+  .header__right { grid-column: auto; flex: none; gap: 16px; }
+  .header__tools { gap: 4px; }
+  .header__tools .tool { padding: 10px; margin: 0; }
+  .tool__label { display: none; }
+  .tool__icon { display: inline-flex; }
+  .header__tools .icon-btn { padding: 10px; margin: 0; }
+  .logo { width: 84px; gap: 3px; }
+  .logo__mark { height: 24px; }
+  .logo__wordmark { width: 84px; }
+
+  .burger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-right: -10px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+  }
+  .burger svg { width: 22px; height: 22px; }
+
+  .banner__text { position: static; margin-top: 0; }
+  .pdp__sticky { position: static; }
+}
+
+@media (max-width: 767px) {
+  /* A column flex with align-items:flex-start shrink-wraps its items, and the
+     media has only absolutely positioned children — so it collapsed to zero
+     width and the picture simply did not appear on a phone. */
+  .banner__media,
+  .banner__text { flex: none; width: 100%; }
+
+  .hero {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(2, 1fr);
+  }
+
+  .rail__slide { flex-basis: var(--slide-sm, 46%); }
+  .tile { height: 65vw; min-height: 240px; }
+  .tile__label { font-size: 24px; line-height: 36px; padding: 12px; }
+
+  .product-grid > .product { grid-column: span 6; }
+  .lookbook > figure,
+  .lookbook > figure.is-wide { grid-column: span 12; }
+  .product--wide { grid-column: span 12; }
+  .product--wide .product__top { aspect-ratio: 1.5 / 1; }
+  .quote-cell { grid-column: span 12; aspect-ratio: auto; padding: 40px 24px; }
+  .quote-cell p { font-size: 20px; line-height: 30px; }
+  .product__top { aspect-ratio: 1 / 1.53; }
+  .product-grid { row-gap: 40px; }
+  /* Two cards to a row leaves a badge and the heart fighting for the same
+     40px; the badges stop short of it and wrap instead. */
+  .product__badges { flex-wrap: wrap; max-width: calc(100% - 62px); }
+  .badge { padding: 7px 5px; font-size: 10px; }
+
+  /* The bloom is a wide soft ellipse behind a wide text column; behind a narrow
+     one it reads as a smear under the heading. */
+  .banner__text { background: none; }
+
+  .pdp { grid-template-columns: 1fr; }
+  .pdp__gallery,
+  .pdp__panel { grid-column: 1 / -1; }
+  .pdp__panel { max-width: 100%; }
+
+  .split__media,
+  .split__body,
+  .prose,
+  .page-head h1,
+  .notfound h1,
+  .notfound div { grid-column: 1 / -1; }
+
+  .gallery > *,
+  .gallery > *:nth-child(6n + 1) { grid-column: span 12; }
+  .swatches > * { grid-column: span 6; }
+  .showroom-card { grid-column: span 12; }
+
+  .footer { margin-top: 80px; }
+  .footer__usps { padding-block: 48px; }
+  .footer__usps .grid-12 > * { grid-column: span 12; max-width: none; }
+  .footer__usps .grid-12 { row-gap: 32px; }
+  .footer__main { padding: 40px 0 64px; }
+  .footer__main .grid-12 > * { grid-column: span 12; }
+  .footer__main .grid-12 { row-gap: 40px; }
+  .newsletter { max-width: none; }
+  .footer__legal .grid-12 > *,
+  .footer__legal .grid-12 > *:first-child { grid-column: span 12; }
+  .footer__legal .grid-12 { row-gap: 12px; }
+  .footer__social { justify-content: flex-start; }
+
+  .filters { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .filters ul {
+    flex-wrap: nowrap;
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+  .filters ul::-webkit-scrollbar { display: none; }
+  .filters li { white-space: nowrap; }
+  .sorter { align-self: flex-end; }
+
+  .collection__head { margin-top: 24px; }
+  .collection__head h1 { margin-bottom: 20px; }
+
+  .cart { width: 100%; }
+  .searchbar input { font-size: 20px; }
+}
+
+/* iOS Safari zooms in — and stays there — on any field under 16px. */
+@media (max-width: 767px) {
+  input,
+  select,
+  textarea { font-size: 16px; }
+}
+
+/* Long addresses and email addresses hold the document open on a narrow
+   phone; the fix is to let them wrap rather than to shrink the type. */
+.showroom-card dd,
+.footer a,
+.pdp__panel { overflow-wrap: anywhere; }
+
+@media (max-width: 700px) {
+  .showroom-grid { grid-template-columns: 1fr; }
+}
+
+/* Touch targets. A 24px icon is a miss on a phone. */
+@media (hover: none) {
+  /* The announcement link is one line of 14px type; giving it the whole bar
+     makes it a 32px target without changing how it looks. */
+  .usp__item { height: var(--header-bar); display: flex; align-items: center; justify-content: center; }
+  .footer__links a { padding-block: 10px; }
+  .footer__social a { width: 44px; height: 44px; margin: -12px; }
+  .wish { width: 44px; height: 44px; }
+  .product__dots button { width: 8px; height: 8px; }
+  .product__dots { gap: 8px; }
+  .product__arrow { display: none; }
+  .rail__btn { width: 44px; height: 44px; }
+  .footer__social svg { width: 22px; height: 22px; }
+}

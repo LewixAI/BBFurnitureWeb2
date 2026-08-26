@@ -1,0 +1,67 @@
+/**
+ * Every value here was read out of fermliving.com in a real browser, not
+ * eyeballed from a screenshot. The colour names are the reference's own — they
+ * come from its stylesheet's custom properties, so `--color-cashmere` means
+ * what it means there.
+ *
+ * See _research/ferm-home.json for the capture and scripts/probe.mjs for how.
+ */
+:root {
+  /* Palette — verbatim from the reference */
+  --color-black: #383838;
+  --color-cream: #fffefa;
+  --color-canvas: #f7f5ef;
+  --color-cashmere: #b7a990;
+  --color-light-beige: #dcd3cb;
+  --color-dark-beige: #785c52;
+  --color-oyster-grey: #e3dad1;
+  --color-warm-grey: #a79e92;
+  --color-parchment: #ded1bc;
+  --color-coffee: #655248;
+  --color-orange: #ca8a55;
+  --color-cognac: #61451d;
+  --color-burned-yellow: #b08651;
+  --color-price: #545454;
+  --color-label: #666;
+  --color-green: #587664;
+
+  --color-black-05: rgba(56, 56, 56, 0.05);
+  --color-black-15: rgba(56, 56, 56, 0.15);
+  --color-black-25: rgba(56, 56, 56, 0.25);
+  --color-black-40: rgba(56, 56, 56, 0.4);
+  --color-black-70: rgba(56, 56, 56, 0.7);
+  --hairline: rgba(0, 0, 0, 0.05);
+  --legal: rgba(0, 0, 0, 0.75);
+
+  /* Layout */
+  --site-max-width: 1920px;
+  --gutter: 24px;
+  --gutter-sm: 16px;
+  --grid-gap: 24px;
+  --grid-gap-sm: 16px;
+  --header-bar: 32px;
+  --header-nav: 69px;
+  --header: 101px;
+  --section-spacing-lg: 100px;
+  --section-spacing-md: 60px;
+  --section-spacing-sm: 40px;
+
+  /* Type — Petrona stands in for Canela Text, Instrument Sans for KH Teka */
+  --font-primary: 'Petrona', 'Iowan Old Style', Georgia, serif;
+  --font-secondary: 'Instrument Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+
+  /* Motion — the reference's own curve and durations */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 0.2s;
+  --dur: 0.3s;
+  --dur-slow: 0.5s;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --gutter: 16px;
+    --grid-gap: 16px;
+    --section-spacing-lg: 60px;
+    --section-spacing-md: 40px;
+  }
+}

@@ -1,5 +1,10 @@
 node_modules/
 dist/
+
+# Local overrides. `.env.example` documents what they are for and stays.
+.env
+.env.*
+!.env.example
 _research/
 _shots/
 assets/library/

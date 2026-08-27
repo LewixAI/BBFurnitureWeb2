@@ -137,6 +137,45 @@ total.
 
 ---
 
+## The assistant
+
+A chat panel, bottom-right, answering from what this site publishes — the same
+agent that runs Big Brain's WhatsApp, in [BBFSystem](https://github.com/LewixAI/BBFSystem).
+
+Its own lazy chunk: **6.6 kB of JS and 4.5 kB of CSS, 3.7 kB gzipped together**,
+fetched from a `requestIdleCallback` after the page settles. It draws nothing
+until `GET /api/chat/config` answers, so a build served without a backend
+behaves exactly as it did before the widget existed.
+
+**This site talks to the API cross-origin, and that is the whole difference
+from the other one.** GitHub Pages means there is no nginx of ours to proxy
+`/api/chat/` through, so:
+
+- the API's `CHAT_ORIGINS` must name `https://lewixai.github.io`, or the
+  browser refuses the response before any of our own checks run;
+- and its `CHAT_DIRECT_ORIGINS` must too. A proxied site carries a shared
+  secret injected by nginx; nothing here can, so this origin is exempted by
+  name. What bounds it instead is Turnstile, the rate limits and the daily
+  budget.
+
+**The corpus is this site, not the other one.** Both publish the same facts in
+different words, so each is indexed separately and a visitor is answered out of
+the pages in front of them — resolved from the request's `Origin`. Re-index
+after every deploy, or the assistant answers from the previous version:
+
+```bash
+cd ../BBFSystem/backend && npm run web:index -- --site bbf2 --url
+```
+
+```bash
+node scripts/chat-ui.mjs   # 43 checks: desktop + 320/360/390 with a finger
+```
+
+Worth knowing: the launcher can legitimately fail to appear — the chat is
+switched off in the back office, the API is unreachable, or the per-IP session
+limit is hit. The harness prints the API's own status codes beside the failure
+for exactly that reason.
+
 ## Verification
 
 `npm run verify` runs four sweeps against a running server — the **dist** build,

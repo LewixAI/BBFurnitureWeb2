@@ -1,5 +1,5 @@
 {
-  "name": "bbfurnitureweb2",
+  "name": "ff-furniture-alt",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -9,7 +9,6 @@
     "preview": "vite preview --port 5191",
     "render": "node scripts/render.mjs",
     "images": "node scripts/build-images.mjs",
-    "organize": "node scripts/organize.mjs",
     "verify": "node scripts/verify.mjs"
   },
   "devDependencies": {

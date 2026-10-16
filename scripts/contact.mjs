@@ -1,6 +1,6 @@
 /**
  * Contact sheet of a directory of images, tiles numbered, so classification is
- * done by looking rather than by trusting a Wix hash for a filename.
+ * done by looking at the pictures rather than trusting a filename.
  *
  *   node scripts/contact.mjs <dir> <out.png> [cols] [tile]
  */

@@ -22,7 +22,7 @@ const esc = (s = '') => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
   .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 /**
- * @param {string} key   library path, e.g. "product/giselle-tray"
+ * @param {string} key   library path, e.g. "product/01"
  * @param {object} opts
  *   alt       required for anything meaningful; pass '' for decoration
  *   sizes     CSS sizes attribute (default: full viewport width)

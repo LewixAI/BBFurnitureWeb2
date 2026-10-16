@@ -4,8 +4,11 @@ import { fileURLToPath } from 'node:url';
 import { img } from '../image.js';
 import { brand, social, showrooms, categories, rooms, products, usps } from '../content.js';
 
+/** The WhatsApp link every "talk to us" button uses: FF Dev Studio's own number. */
+export const waLink = (text = social.whatsappText) => `${social.whatsapp}?text=${encodeURIComponent(text)}`;
+
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const svg = (name) => readFileSync(path.join(ROOT, 'public', 'brand', `${name}.svg`), 'utf8')
+const svg = (name) => readFileSync(path.join(ROOT, 'public', 'brand', `${name}.svg`), 'utf8').trim()
   .replace('<svg ', `<svg class="logo__${name.replace('logo-', '')}" `);
 
 export const esc = (s = '') => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
@@ -27,9 +30,6 @@ export const icons = {
   bag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>',
   back: '<svg viewBox="0 0 13 8" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M4 1L1 4l3 3M1 4h12"/></svg>',
   check: '<svg viewBox="0 0 11 8" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M1 4l3 3 6-6"/></svg>',
-  instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>',
-  facebook: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M14.5 8.5H17V5.5h-2.5A3.5 3.5 0 0 0 11 9v2H9v3h2v7h3v-7h2.3l.7-3H14V9c0-.3.2-.5.5-.5Z"/></svg>',
-  whatsapp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3.5 20.5l1.3-4.2A8.2 8.2 0 1 1 8 19.4l-4.5 1.1Z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5.6 0 1-.4 1-1v-.8l-1.8-.7-.8.9a5 5 0 0 1-2.3-2.3l.9-.8-.7-1.8h-.8c-.6 0-1 .4-1 1Z" fill="currentColor" stroke="none"/></svg>',
 };
 
 /* ── Navigation model, mirroring the reference's four-item menu ─────────── */
@@ -43,22 +43,19 @@ export const menu = [
         title: 'Accessories',
         links: [
           { label: 'All Accessories', href: '/collections/accessories.html' },
-          { label: 'Boards & Plates', href: '/collections/accessories.html#boards' },
-          { label: 'Bowls & Trays', href: '/collections/accessories.html#bowls' },
-          { label: 'Serving', href: '/collections/accessories.html#serving' },
           { label: 'Everything', href: '/collections/all.html' },
         ],
       },
       {
         title: 'Materials',
         links: [
-          { label: 'Reclaimed Teak', href: '/materials.html' },
+          { label: 'Teak', href: '/materials.html' },
           { label: 'Textures', href: '/materials.html#textures' },
-          { label: 'The Sofa Series', href: '/collections/sofa.html#series' },
+          { label: 'Sofa Types', href: '/collections/sofa.html#series' },
         ],
       },
     ],
-    feature: { img: 'category/sofa', label: 'The Sofa Series', href: '/collections/sofa.html' },
+    feature: { img: 'category/sofa', label: 'Sofas', href: '/collections/sofa.html' },
   },
   {
     label: 'Inspiration',
@@ -83,7 +80,7 @@ export const menu = [
     href: '/about.html',
     columns: [
       {
-        title: 'Big Brain',
+        title: 'FF Furniture',
         links: [
           { label: 'About Us', href: '/about.html' },
           { label: 'Materials', href: '/materials.html' },
@@ -91,15 +88,14 @@ export const menu = [
         ],
       },
       {
-        title: 'Trade',
+        title: 'Projects',
         links: [
-          { label: 'Interior Designers', href: '/about.html#trade' },
-          { label: 'Contract Projects', href: '/projects.html' },
+          { label: 'All Projects', href: '/projects.html' },
           { label: 'Get in Touch', href: '/contact.html' },
         ],
       },
     ],
-    feature: { img: 'showroom/johor-bahru', label: 'Visit a Showroom', href: '/contact.html' },
+    feature: { img: 'showroom/one', label: 'Visit a Showroom', href: '/contact.html' },
   },
 ];
 
@@ -203,7 +199,7 @@ export function header({ over = false, projects = [] } = {}) {
       </div></div>
     </div>`).join('')}
     <div style="padding-top:24px">
-      <a class="btn btn--block" href="${social.whatsapp}" target="_blank" rel="noopener">WhatsApp us</a>
+      <a class="btn btn--block" href="${waLink('Hello from FF Furniture')}" target="_blank" rel="noopener">WhatsApp us</a>
     </div>
   </div>
 </aside>
@@ -216,8 +212,8 @@ export function header({ over = false, projects = [] } = {}) {
   <div class="cart__body" data-cart-body></div>
   <div class="cart__foot">
     <div class="cart__total"><span>Total</span><span data-cart-total>MYR 0.00</span></div>
-    <a class="btn btn--solid" style="display:flex;width:100%" data-cart-checkout href="${social.whatsapp}" target="_blank" rel="noopener">Check out on WhatsApp</a>
-    <p class="t-xs" style="margin-top:12px;color:var(--color-label)">Orders are confirmed over WhatsApp — the same way the showrooms take them.</p>
+    <a class="btn btn--solid" style="display:flex;width:100%" data-cart-checkout href="${waLink()}" target="_blank" rel="noopener">Check out on WhatsApp</a>
+    <p class="t-xs" style="margin-top:12px;color:var(--color-label)">Demo checkout: this opens a WhatsApp chat with FF Dev Studio.</p>
   </div>
 </aside>
 
@@ -226,10 +222,10 @@ export function header({ over = false, projects = [] } = {}) {
 
 /* ── Footer ────────────────────────────────────────────────────────────── */
 const footerUsps = [
-  { title: 'Two showrooms', sub: 'Johor Bahru and Petaling Jaya', href: '/contact.html' },
-  { title: 'Made to order', sub: 'Sized to the room it is going in', href: '/collections/sofa.html' },
-  { title: 'We would love to help you', sub: `WhatsApp ${social.whatsappNumber}`, href: social.whatsapp },
-  { title: 'Old wood, new life', sub: 'Reclaimed teak, rebuilt by hand', href: '/materials.html' },
+  { title: 'Two showrooms', sub: 'Kuala Lumpur and Penang (placeholders)', href: '/contact.html' },
+  { title: 'Teak and stone', sub: 'Tableware, tables and seating', href: '/collections/all.html' },
+  { title: 'Questions?', sub: 'Message us on WhatsApp', href: waLink('Hello from FF Furniture') },
+  { title: 'A demo store', sub: 'Built by FF Dev Studio', href: brand.studioUrl },
 ];
 
 const footerCols = [
@@ -240,7 +236,7 @@ const footerCols = [
       { label: 'Visit a Showroom', href: '/contact.html' },
       { label: 'Delivery', href: '/contact.html#delivery' },
       { label: 'Care and Maintenance', href: '/materials.html#care' },
-      { label: 'WhatsApp Us', href: social.whatsapp },
+      { label: 'WhatsApp Us', href: waLink('Hello from FF Furniture') },
     ],
   },
   {
@@ -254,11 +250,10 @@ const footerCols = [
     ],
   },
   {
-    title: 'Professionals',
+    title: 'FF Dev Studio',
     links: [
-      { label: 'Interior Designers', href: '/about.html#trade' },
-      { label: 'Contract Projects', href: '/projects.html' },
-      { label: 'Showrooms', href: '/contact.html' },
+      { label: 'ffdev.studio', href: brand.studioUrl },
+      { label: 'Get a store like this', href: brand.studioUrl },
     ],
   },
 ];
@@ -284,8 +279,8 @@ export function footer() {
     <div class="limit">
       <div class="grid-12">
         <div class="newsletter">
-          <h2 class="t-lead">Join the studio list</h2>
-          <p>New pieces, new projects, and the occasional look at what is on the workshop floor.</p>
+          <h2 class="t-lead">Stay in the loop</h2>
+          <p>A placeholder sign-up form. Nothing is saved or sent.</p>
           <form data-newsletter>
             <input type="email" name="email" required placeholder="Your email" aria-label="Your email">
             <button type="submit">Sign up</button>
@@ -307,17 +302,13 @@ export function footer() {
     <div class="limit">
       <div class="grid-12">
         <div class="footer__links">
-          ${showrooms.map((s) => `<a href="${s.mapHref}" target="_blank" rel="noopener">${esc(s.city)}</a>`).join('\n          ')}
+          ${showrooms.map((s) => `<a href="/contact.html">${esc(s.name)}</a>`).join('\n          ')}
           <a href="tel:${showrooms[0].telHref}">${esc(showrooms[0].tel)}</a>
           <a href="mailto:${showrooms[0].email}">${esc(showrooms[0].email)}</a>
         </div>
-        <address>© ${brand.year} ${esc(brand.legal)}</address>
-        <div class="footer__social">
-          <a href="${social.instagram}" target="_blank" rel="noopener" aria-label="Instagram">${icons.instagram}</a>
-          <a href="${social.facebook}" target="_blank" rel="noopener" aria-label="Facebook">${icons.facebook}</a>
-          <a href="${social.whatsapp}" target="_blank" rel="noopener" aria-label="WhatsApp">${icons.whatsapp}</a>
-        </div>
+        <address>© ${brand.year} ${esc(brand.studio)}</address>
       </div>
+      <p class="footer__demo">Demo store by FF Dev Studio — products, prices and addresses are placeholders. <a href="${brand.studioUrl}" target="_blank" rel="noopener">ffdev.studio</a></p>
     </div>
   </div>
 </footer>`;
@@ -332,6 +323,7 @@ export function layout({ title, description, body, over = false, projects = [], 
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
+<meta name="robots" content="noindex">
 <link rel="canonical" href="${SITE}${canonical}">
 <meta property="og:type" content="website">
 <meta property="og:title" content="${esc(title)}">
@@ -368,7 +360,6 @@ export function productCard(p, { sizes = '(max-width: 767px) 50vw, 25vw', wide =
   const href = p.href ?? `/products/${p.slug}.html`;
   const badges = [];
   if (p.tag) badges.push(`<div class="badge badge--dark">${esc(p.tag)}</div>`);
-  if (p.reclaimed) badges.push('<div class="badge">Reclaimed</div>');
 
   const price = p.price != null ? money(p.price)
     : p.soldOut ? 'Sold out'

@@ -32,7 +32,7 @@ const withBase = (html) => (BASE
       + list.split(',').map((part) => part.trim().replace(/^\/(?!\/)/, `${BASE}/`)).join(', ')
       + '"')
   : html);
-const { projects } = await import(path.resolve(ROOT, '..', 'BBFurnitureWeb', 'src', 'projects.js'));
+const { projects } = await import('../src/projects.js');
 
 const ctx = { projects };
 const files = new Map();
@@ -71,7 +71,7 @@ await writeFile(path.join(ROOT, 'public', 'catalogue.json'), JSON.stringify(cata
 const index = [
   ...products.map((p) => ({
     title: p.name, href: `${BASE}/products/${p.slug}.html`, img: thumb(p.img),
-    meta: p.price != null ? `MYR ${p.price.toFixed(2)}` : 'Price on request',
+    meta: p.price != null ? `MYR ${p.price.toFixed(2)}` : 'Sold out',
     text: `${p.name} ${p.blurb}`.toLowerCase(),
   })),
   ...categories.map((c) => ({

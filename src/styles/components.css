@@ -110,13 +110,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 3px;
   width: 107px;
+  /* The old lockup measured 45px tall; holding it keeps the nav row at 69px. */
+  min-height: 45px;
   color: var(--color-black);
 }
-/* The wordmark's letterforms are inline (two strokes per stem), so below about
-   100px wide they fill in and read as a smudge. */
-.logo__mark { height: 28px; width: auto; }
+/* Stacked lockup: the FF mark over FURNITURE, which is outlined from Petrona
+   so it needs no font to load. The pair stays inside the 69px nav row. */
+.logo__mark { height: 22px; width: auto; }
 .logo__wordmark { width: 107px; height: auto; }
 
 .header__menu {
@@ -353,7 +356,7 @@
 .hero__pane:hover .media img { transform: scale(1.03); }
 .hero__link { position: absolute; inset: 0; z-index: 2; }
 /* The reference's hero photography is dark enough to carry cream type on its
-   own. Big Brain's is not — these two scrims buy the contrast back without
+   own. This site's bright interiors are not — these two scrims buy the contrast back without
    greying the picture: one under the header, one under the caption. */
 .hero__pane::before,
 .hero__pane::after {
@@ -777,19 +780,17 @@
 }
 .footer__links { display: flex; flex-wrap: wrap; gap: 4px 24px; }
 .footer__links a { display: inline-block; padding-block: 4px; }
-.footer__social { display: flex; gap: 8px; justify-content: flex-end; }
-/* flex:none matters — without it the anchors shrink to the width the row has
-   left and the icons squash to a sliver. */
-.footer__social a {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  margin: -10px;
+/* The demo note sits on its own line under the legal row so it is read, not
+   skimmed past. */
+.footer__demo {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--hairline);
+  font-size: 13px;
+  line-height: 19.5px;
+  color: var(--legal);
 }
-.footer__social svg { width: 20px; height: 20px; }
+.footer__demo a { text-decoration: underline; text-underline-offset: 3px; }
 
 /* ══ Collection page ══════════════════════════════════════════════════════ */
 .collection__head { margin-top: 44px; }

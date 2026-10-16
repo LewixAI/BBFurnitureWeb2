@@ -1,9 +1,9 @@
 import {
-  layout, banner, rail, categoryTile, roomTile, productCard, esc, img,
+  layout, banner, rail, categoryTile, roomTile, productCard, esc, img, SITE,
 } from './partials.js';
 import {
   brand, categories, rooms, products, hero, homeBanners, homeRails,
-  instagramTag, instagramBlurb, copy,
+  detailsTitle, detailsBlurb, copy,
 } from '../content.js';
 
 const bySlug = (slug) => products.find((p) => p.slug === slug);
@@ -44,8 +44,8 @@ function ugc() {
   return `
 <div class="limit">
   <div class="section--pad">
-    <h2 class="t-h2">${esc(instagramTag)}</h2>
-    <p class="t-xs" style="max-width:38em;margin-top:12px;color:var(--color-price)">${esc(instagramBlurb)}</p>
+    <h2 class="t-h2">${esc(detailsTitle)}</h2>
+    <p class="t-xs" style="max-width:38em;margin-top:12px;color:var(--color-price)">${esc(detailsBlurb)}</p>
     <div style="margin-top:24px" data-reveal>
       ${rail(stills.map((s) => `<div class="ugc">${img(s, { alt: '', sizes: '(max-width: 767px) 46vw, 24vw', contain: true })}</div>`), { slide: '23.5%' })}
     </div>
@@ -83,8 +83,8 @@ ${ugc()}
 `;
 
   return layout({
-    title: `${brand.name} | Reclaimed teak furniture, Johor Bahru & Petaling Jaya`,
-    description: 'Big Brain is a creative home editor working in reclaimed teak — sofas, dining tables, chairs and accessories, made to order and sold from two Malaysian showrooms.',
+    title: `${brand.name} | ${brand.tagline}`,
+    description: 'FF Furniture is a demo furniture store by FF Dev Studio: sofas, dining tables, chairs and teak accessories. Products, prices and addresses are placeholders.',
     body,
     over: true,
     projects,
@@ -93,9 +93,8 @@ ${ugc()}
       '@context': 'https://schema.org',
       '@type': 'FurnitureStore',
       name: brand.name,
-      description: 'Reclaimed teak furniture and interiors.',
-      url: 'https://bbf2.lewix.ai',
-      legalName: brand.legal,
+      description: 'A demo furniture store by FF Dev Studio. Products, prices and addresses are placeholders.',
+      url: SITE,
     },
   });
 }

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://lewixai.github.io/BBFurnitureWeb2/sitemap.xml
+Sitemap: https://ff-furniture-alt.pages.dev/sitemap.xml

@@ -1,13 +1,13 @@
 /**
- * Cart and wishlist, both in localStorage, both checking out to WhatsApp —
- * which is how the showrooms already take orders, so the Add to Cart button is
- * a real one rather than a decoration.
+ * Cart and wishlist, both in localStorage. The demo checkout opens a WhatsApp
+ * chat with FF Dev Studio carrying the lines and the total, so the Add to Cart
+ * button does something real rather than being a decoration.
  */
 import { panel } from './header.js';
 
-const KEY = 'bb-cart';
-const WISH = 'bb-wishlist';
-const WA = 'https://wa.me/60127794321';
+const KEY = 'ff-cart';
+const WISH = 'ff-wishlist';
+const WA = 'https://wa.me/60139078719';
 
 const read = (k) => { try { return JSON.parse(localStorage.getItem(k)) || []; } catch { return []; } };
 const write = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* private mode */ } };
@@ -69,8 +69,8 @@ function renderCart() {
       return p ? `• ${l.qty} × ${p.name} — ${money(p.price * l.qty)}` : '';
     }).filter(Boolean);
     const text = lines.length
-      ? `Hi Big Brain, I'd like to order:\n${lines.join('\n')}\n\nTotal: ${money(total())}`
-      : 'Hi Big Brain, I have a question about a piece.';
+      ? `Demo order — FF Furniture\n${lines.join('\n')}\n\nTotal: ${money(total())}`
+      : 'Demo order — FF Furniture\n\nNo items yet.';
     checkout.href = `${WA}?text=${encodeURIComponent(text)}`;
   }
 }

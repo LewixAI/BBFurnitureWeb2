@@ -23,8 +23,8 @@
   .tool__label { display: none; }
   .tool__icon { display: inline-flex; }
   .header__tools .icon-btn { padding: 10px; margin: 0; }
-  .logo { width: 84px; gap: 3px; }
-  .logo__mark { height: 24px; }
+  .logo { width: 84px; gap: 3px; min-height: 38px; }
+  .logo__mark { height: 19px; }
   .logo__wordmark { width: 84px; }
 
   .burger {
@@ -107,7 +107,6 @@
   .footer__legal .grid-12 > *,
   .footer__legal .grid-12 > *:first-child { grid-column: span 12; }
   .footer__legal .grid-12 { row-gap: 12px; }
-  .footer__social { justify-content: flex-start; }
 
   .filters { flex-direction: column; align-items: flex-start; gap: 16px; }
   .filters ul {
@@ -151,11 +150,9 @@
      makes it a 32px target without changing how it looks. */
   .usp__item { height: var(--header-bar); display: flex; align-items: center; justify-content: center; }
   .footer__links a { padding-block: 10px; }
-  .footer__social a { width: 44px; height: 44px; margin: -12px; }
   .wish { width: 44px; height: 44px; }
   .product__dots button { width: 8px; height: 8px; }
   .product__dots { gap: 8px; }
   .product__arrow { display: none; }
   .rail__btn { width: 44px; height: 44px; }
-  .footer__social svg { width: 22px; height: 22px; }
 }

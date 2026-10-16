@@ -10,7 +10,7 @@ const ROOT = path.dirname(fileURLToPath(import.meta.url));
 function renderPlugin() {
   const render = () => execFileSync('node', ['scripts/render.mjs'], { cwd: ROOT, stdio: 'inherit' });
   return {
-    name: 'bb-render',
+    name: 'ff-render',
     buildStart() { render(); },
     configureServer(server) {
       server.watcher.add(path.join(ROOT, 'src'));

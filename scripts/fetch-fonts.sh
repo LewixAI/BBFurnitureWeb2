@@ -8,14 +8,14 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 UA="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36"
-mkdir -p public/fonts /tmp/bbf-fonts
+mkdir -p public/fonts /tmp/ff-fonts
 
-curl -s -A "$UA" "https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,400..600;1,400&display=swap" -o /tmp/bbf-fonts/petrona.css
-curl -s -A "$UA" "https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..600;1,400&display=swap" -o /tmp/bbf-fonts/instrument.css
+curl -s -A "$UA" "https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,400..600;1,400&display=swap" -o /tmp/ff-fonts/petrona.css
+curl -s -A "$UA" "https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..600;1,400&display=swap" -o /tmp/ff-fonts/instrument.css
 
 python3 - <<'PY'
 import re, os, urllib.request
-css = ''.join(open(f'/tmp/bbf-fonts/{f}').read() + '\n' for f in ('petrona.css', 'instrument.css'))
+css = ''.join(open(f'/tmp/ff-fonts/{f}').read() + '\n' for f in ('petrona.css', 'instrument.css'))
 out_dir = 'public/fonts'
 blocks = re.findall(r'/\*\s*([\w-]+)\s*\*/\s*@font-face\s*\{(.*?)\}', css, re.S)
 lines = []

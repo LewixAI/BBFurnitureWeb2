@@ -1,14 +1,15 @@
 /**
- * The check that has to pass before this ships. Four sweeps, all driven by a
+ * The check that has to pass before this ships. Five sweeps, all driven by a
  * real headless Chrome rather than by assertions about the source:
  *
  *   links   every internal href and every image URL, resolved
+ *   demo    every page is noindex, carries the demo note, and links nowhere it should not
  *   layout  eight widths × every page type, looking for sideways scroll,
  *           overlapping header, and text that overflows its box
  *   touch   the same pages with a finger: no mouse, hasTouch, tap()
  *   ui      the interactive parts actually doing their job
  *
- *   node scripts/verify.mjs [--only=links,layout,touch,ui] [--root=dist]
+ *   node scripts/verify.mjs [--only=links,demo,layout,touch,ui] [--root=dist]
  *
  * --root says which directory the server is actually serving. Reading the
  * project root while a built site is being served checks the wrong files: the
@@ -66,7 +67,7 @@ if (run('links')) {
       for (const part of m[1].split(',')) {
         const url = part.trim().split(/\s+/)[0];
         // Prefix-aware on purpose: under a deploy base these become
-        // /BBFurnitureWeb2/img/…, and a filter written for /img/ matches
+        // /repo-name/img/…, and a filter written for /img/ matches
         // nothing and reports a clean pass over an empty set.
         if (/^(?:\/[^/]+)?\/(img|fonts|brand|assets)\//.test(url)) imgs.add(url);
       }
@@ -83,7 +84,7 @@ if (run('links')) {
     return s;
   };
 
-  check(pages.length > 50, `found pages to check (${pages.length} in ${path.relative(ROOT, SERVED) || '.'})`);
+  check(pages.length > 30, `found pages to check (${pages.length} in ${path.relative(ROOT, SERVED) || '.'})`);
 
   let broken = 0;
   for (const h of hrefs) {
@@ -105,10 +106,31 @@ if (run('links')) {
   await page.close();
 }
 
+/* ══ 1b. Demo-store invariants ════════════════════════════════════════════ */
+if (run('links') || run('demo')) {
+  console.log('\n── demo ──');
+  const pages = await htmlFiles();
+  let noindex = 0, note = 0, strayLinks = [], wrongWa = [], chat = [];
+  for (const p of pages) {
+    const html = await readFile(path.join(SERVED, p.slice(1)), 'utf8');
+    if (/<meta name="robots" content="noindex">/.test(html)) noindex++;
+    if (html.includes('Demo store by FF Dev Studio — products, prices and addresses are placeholders.')) note++;
+    if (/google\.com\/maps|instagram\.com|facebook\.com/.test(html)) strayLinks.push(p);
+    for (const m of html.matchAll(/https:\/\/wa\.me\/(\d+)/g)) if (m[1] !== '60139078719') wrongWa.push(`${p} ${m[1]}`);
+    if (/chat\.(js|css)|api\/chat/.test(html)) chat.push(p);
+  }
+  check(noindex === pages.length, `every page is noindex (${noindex}/${pages.length})`);
+  check(note === pages.length, `every page carries the demo note (${note}/${pages.length})`);
+  check(strayLinks.length === 0, `no map, Instagram or Facebook links${strayLinks.length ? ' — ' + strayLinks.slice(0, 3).join(', ') : ''}`);
+  check(wrongWa.length === 0, `every WhatsApp link goes to the studio number${wrongWa.length ? ' — ' + wrongWa.slice(0, 3).join(', ') : ''}`);
+  check(chat.length === 0, 'no chat assistant is loaded');
+  console.log(`  ${pages.length} pages`);
+}
+
 /* ══ 2. Layout at eight widths ════════════════════════════════════════════ */
 const PAGES = [
   '/', '/collections/all.html', '/collections/accessories.html', '/collections/sofa.html',
-  '/products/giselle-tray.html', '/projects.html', '/projects/eco-botanic.html',
+  '/products/teak-tray.html', '/projects.html', '/projects/garden-house.html',
   '/rooms/dining-room.html', '/about.html', '/materials.html', '/contact.html',
   '/wishlist.html', '/404.html',
 ];
@@ -186,7 +208,7 @@ if (run('touch')) {
   check(await page.locator('.drawer.is-open').count() === 0, 'phone: drawer closes');
 
   // Every field must be ≥16px or iOS Safari zooms in and stays there.
-  for (const p of ['/', '/contact.html', '/products/giselle-tray.html']) {
+  for (const p of ['/', '/contact.html', '/products/teak-tray.html']) {
     await page.goto(BASE + p, { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(300);
     const small = await page.evaluate(() => [...document.querySelectorAll('input, select, textarea')]
@@ -277,6 +299,7 @@ if (run('ui')) {
   const wa = await page.locator('[data-cart-checkout]').getAttribute('href');
   check(wa?.includes('wa.me') && wa.includes('text='), 'checkout link carries the order to WhatsApp');
   check(decodeURIComponent(wa).includes('MYR'), 'checkout message quotes a price');
+  check(wa?.includes('wa.me/60139078719') && decodeURIComponent(wa).startsWith('https://wa.me/60139078719?text=Demo order — FF Furniture'), 'checkout goes to the studio number and opens with the demo-order line');
 
   await page.locator('[data-line-up]').first().click();
   await page.waitForTimeout(400);
@@ -327,7 +350,7 @@ if (run('ui')) {
   await page.waitForTimeout(400);
 
   // Product page: gallery, accordions, quantity.
-  await page.goto(BASE + '/products/giselle-tray.html', { waitUntil: 'networkidle' });
+  await page.goto(BASE + '/products/teak-tray.html', { waitUntil: 'networkidle' });
   await page.waitForTimeout(700);
   const openPanels = await page.locator('.accordion__item.is-open').count();
   check(openPanels === 1, 'one accordion starts open');

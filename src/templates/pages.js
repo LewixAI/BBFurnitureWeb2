@@ -1,5 +1,5 @@
 import {
-  layout, banner, rail, categoryTile, roomTile, productCard, esc, money, img, icons, SITE,
+  layout, banner, rail, categoryTile, roomTile, productCard, esc, money, img, icons, SITE, waLink,
 } from './partials.js';
 import {
   brand, social, showrooms, categories, rooms, products, textures, textureIntro,
@@ -10,16 +10,15 @@ import { has } from '../image.js';
 const bySlug = (slug) => products.find((p) => p.slug === slug);
 const cat = (slug) => categories.find((c) => c.slug === slug);
 
-/* Lifestyle imagery per furniture category, each one checked by eye against
-   the file it points at (see _research/sheet-lib.png). Furniture is quoted, not
-   priced, so these are collection tiles rather than product tiles. */
+/* Lifestyle imagery per furniture category. Furniture is not priced in this
+   demo, so these are collection tiles rather than product tiles. */
 const FEATURES = {
   sofa: ['category/sofa', 'sofa/gallery-02', 'sofa/gallery-05', 'sofa/gallery-07', 'sofa/gallery-03', 'sofa/gallery-06'],
-  'dining-table': ['category/dining-table', 'home/dining-room-01', 'material/titan-dining-table', 'home/dining-room-02', 'material/cross-leg-dining-table'],
+  'dining-table': ['category/dining-table', 'home/dining-room-01', 'material/teak-table-top', 'home/dining-room-02', 'material/teak-table-corner'],
   'arm-chair': ['category/arm-chair', 'home/arm-chair-01', 'sofa/gallery-04'],
-  'coffee-table': ['category/coffee-table', 'home/coffee-table-detail', 'showroom/interior-02'],
+  'coffee-table': ['category/coffee-table', 'home/coffee-table-detail', 'showroom/two'],
   bookcase: ['category/bookcase', 'home/living-room-04', 'home/living-room-03'],
-  'sideboard-console': ['category/sideboard-console', 'showroom/interior-01', 'home/living-room-05'],
+  'sideboard-console': ['category/sideboard-console', 'showroom/one', 'home/living-room-05'],
 };
 
 export const collectionKeys = ['all', ...categories.map((c) => c.slug)];
@@ -55,7 +54,6 @@ export function collectionPage(key, { projects = [] } = {}) {
         slug: x.slug,
         img: x.img,
         href: `/collections/${x.slug}.html`,
-        reclaimed: true,
       }, { wide: true, sizes: '(max-width: 767px) 100vw, 50vw' }));
       cells = [...wide.slice(0, 2), ...cells.slice(0, 8), ...wide.slice(2), ...cells.slice(8)];
     }
@@ -72,7 +70,7 @@ export function collectionPage(key, { projects = [] } = {}) {
     <div class="lookbook" data-reveal>
       ${(FEATURES[key] || [c.img]).filter(has).map((f, i) => `
       <figure${i % 4 === 0 ? ' class="is-wide"' : ''}>
-        ${img(f, { alt: `${c.name} in a Big Brain interior`, sizes: i % 4 === 0 ? '(max-width: 767px) 100vw, 66vw' : '(max-width: 767px) 100vw, 33vw', eager: i < 2 })}
+        ${img(f, { alt: `${c.name} in an interior`, sizes: i % 4 === 0 ? '(max-width: 767px) 100vw, 66vw' : '(max-width: 767px) 100vw, 33vw', eager: i < 2 })}
       </figure>`).join('')}
     </div>
   </div>
@@ -87,21 +85,21 @@ export function collectionPage(key, { projects = [] } = {}) {
   const series = key === 'sofa' ? `
   <div class="limit">
     <section class="series" id="series">
-      <h2 class="t-h2">The Sofa Series</h2>
-      <p class="t-sm" style="margin-top:8px;color:var(--color-price)">Every one is made to order — sized, upholstered and finished for the room it is going in. Ask us for the fabric book.</p>
+      <h2 class="t-h2">Sofa Types</h2>
+      <p class="t-sm" style="margin-top:8px;color:var(--color-price)">Placeholder list of the sofa shapes a store might offer.</p>
       <ul>
         ${sofaSeries.map((s) => `<li>${esc(s)}</li>`).join('\n        ')}
       </ul>
-      <a class="btn" style="margin-top:24px" href="${social.whatsapp}" target="_blank" rel="noopener">Ask about a sofa</a>
+      <a class="btn" style="margin-top:24px" href="${waLink('Demo enquiry — FF Furniture: sofas')}" target="_blank" rel="noopener">Ask about a sofa</a>
     </section>
   </div>` : '';
 
   const enquire = priced ? '' : `
   <div class="limit">
     <div class="section--pad" style="max-width:46em">
-      <h2 class="t-h2">Quoted, not listed</h2>
-      <p style="margin-top:16px;font-size:16px;line-height:26px">${esc(c.name)} is made to order in reclaimed teak, so the price follows the size, the texture and the finish you choose. Send us the room and we will come back with a number.</p>
-      <a class="btn btn--solid" style="margin-top:24px" href="${social.whatsapp}" target="_blank" rel="noopener">Ask for a quote</a>
+      <h2 class="t-h2">Price on request</h2>
+      <p style="margin-top:16px;font-size:16px;line-height:26px">Furniture is not priced in this demo. Use the button to open a WhatsApp chat with FF Dev Studio about ${esc(c.name.toLowerCase())}.</p>
+      <a class="btn btn--solid" style="margin-top:24px" href="${waLink(`Demo enquiry — FF Furniture: ${c.name}`)}" target="_blank" rel="noopener">Ask for a quote</a>
     </div>
   </div>`;
 
@@ -138,7 +136,7 @@ export function collectionPage(key, { projects = [] } = {}) {
   return layout({
     title: `${title} — ${brand.name}`,
     description: isAll
-      ? 'Every piece Big Brain makes, from reclaimed teak sofas to the boards and bowls turned from their offcuts.'
+      ? 'Every piece in the FF Furniture demo store, from sofas to teak boards and bowls.'
       : c.blurb.slice(0, 155),
     body,
     projects,
@@ -155,7 +153,7 @@ export function productPage(p, { projects = [] } = {}) {
   const price = p.price != null ? money(p.price) : p.soldOut ? 'Sold out' : 'Price on request';
   const action = p.price != null
     ? `<button class="btn btn--solid" data-add="${esc(p.slug)}">Add to Cart</button>`
-    : `<a class="btn btn--solid" href="${social.whatsapp}" target="_blank" rel="noopener">Enquire on WhatsApp</a>`;
+    : `<a class="btn btn--solid" href="${waLink(`Demo enquiry — FF Furniture: ${p.name}`)}" target="_blank" rel="noopener">Enquire on WhatsApp</a>`;
 
   const body = `
 <div class="headspace">
@@ -164,7 +162,6 @@ export function productPage(p, { projects = [] } = {}) {
 
     <div class="pdp">
       <div class="pdp__gallery">
-        <div class="pdp__badges">${p.reclaimed ? '<div class="badge">Reclaimed</div>' : ''}</div>
         ${gallery.map((g, i) => img(g, { alt: i === 0 ? p.name : '', sizes: '(max-width: 767px) 100vw, 48vw', eager: i === 0, contain: /^(product|object)\//.test(g) })).join('\n        ')}
       </div>
 
@@ -172,7 +169,7 @@ export function productPage(p, { projects = [] } = {}) {
         <div class="pdp__sticky">
           <h1>${esc(p.name)}</h1>
           <div class="pdp__price">${esc(price)}</div>
-          <div class="pdp__variant">Reclaimed teak, oiled</div>
+          <div class="pdp__variant">Teak, oiled</div>
 
           ${p.price != null ? `
           <div class="qty" data-qty>
@@ -187,15 +184,15 @@ export function productPage(p, { projects = [] } = {}) {
           </div>
 
           <div class="pdp__delivery">
-            <div><a href="/contact.html#delivery">Delivery across Peninsular Malaysia</a></div>
-            <div class="muted">Collect from Johor Bahru or Petaling Jaya, free</div>
+            <div><a href="/contact.html#delivery">Delivery information</a></div>
+            <div class="muted">Placeholder text — this is a demo store</div>
           </div>
 
           <ul class="pdp__usps">
-            <li>${icons.check}<a href="/materials.html">Reclaimed teak, no two alike</a></li>
-            <li>${icons.check}<a href="/contact.html">Two showrooms to see it in</a></li>
-            <li>${icons.check}<a href="${social.whatsapp}" target="_blank" rel="noopener">Order over WhatsApp</a></li>
-            <li>${icons.check}<a href="/materials.html#care">Care instructions included</a></li>
+            <li>${icons.check}<a href="/materials.html">Solid teak, no two alike</a></li>
+            <li>${icons.check}<a href="/contact.html">Two placeholder showrooms</a></li>
+            <li>${icons.check}<a href="${waLink()}" target="_blank" rel="noopener">Demo checkout over WhatsApp</a></li>
+            <li>${icons.check}<a href="/materials.html#care">Care notes</a></li>
           </ul>
 
           <div class="accordion" data-accordion>
@@ -206,22 +203,20 @@ export function productPage(p, { projects = [] } = {}) {
             <div class="accordion__item">
               <button class="accordion__btn" aria-expanded="false"><span>Details</span><span class="accordion__sign" aria-hidden="true">+</span></button>
               <div class="accordion__panel"><div><div class="accordion__body"><ul>
-                <li>Reclaimed teak</li>
-                <li>Food-safe oil finish</li>
+                <li>Teak</li>
+                <li>Oil finish</li>
                 <li>Hand-finished, so grain, colour and outline vary</li>
-                <li>Made in Indonesia, finished for Big Brain</li>
               </ul></div></div></div>
             </div>
             <div class="accordion__item">
               <button class="accordion__btn" aria-expanded="false"><span>Delivery &amp; Returns</span><span class="accordion__sign" aria-hidden="true">+</span></button>
               <div class="accordion__panel"><div><div class="accordion__body">
-                <p>Delivery across Peninsular Malaysia, quoted with your order. Collection from either showroom is free.</p>
-                <p>Tell us within seven days if a piece arrives damaged and we will replace it.</p>
+                <p>Placeholder text. This is a demo store: nothing is shipped and no order is fulfilled.</p>
               </div></div></div>
             </div>
           </div>
 
-          <a class="t-sm" style="text-decoration:underline;text-underline-offset:3px" href="/materials.html">What does our RECLAIMED tag mean?</a>
+          <a class="t-sm" style="text-decoration:underline;text-underline-offset:3px" href="/materials.html">About teak</a>
         </div>
       </div>
     </div>
@@ -293,15 +288,15 @@ export function roomPage(r, { projects = [] } = {}) {
   <div class="limit">
     <div class="section--pad" style="max-width:46em">
       <h2 class="t-h2">Plan the room with us</h2>
-      <p style="margin-top:16px;font-size:16px;line-height:26px">Bring a floor plan, or just the measurements on your phone. We will work out what fits, in what texture, and what it costs.</p>
-      <a class="btn btn--solid" style="margin-top:24px" href="${social.whatsapp}" target="_blank" rel="noopener">Talk to us</a>
+      <p style="margin-top:16px;font-size:16px;line-height:26px">Placeholder text. In a real store this is where a room-planning enquiry would start.</p>
+      <a class="btn btn--solid" style="margin-top:24px" href="${waLink(`Demo enquiry — FF Furniture: ${r.name}`)}" target="_blank" rel="noopener">Talk to us</a>
     </div>
   </div>
 </div>`;
 
   return layout({
     title: `${r.name} — ${brand.name}`,
-    description: `${r.name}: reclaimed teak furniture from Big Brain, made to order for Malaysian homes.`,
+    description: `${r.name}: sofas, tables, chairs and storage from the FF Furniture demo store.`,
     body,
     projects,
     canonical: `/rooms/${r.slug}.html`,
@@ -315,7 +310,7 @@ export function projectsPage({ projects = [] } = {}) {
 <div class="headspace">
   <div class="limit collection__head">
     <h1 class="t-h1">Inspiration</h1>
-    <p class="collection__intro">Twenty-six homes, showrooms and workspaces Big Brain has furnished across Johor and the Klang Valley.</p>
+    <p class="collection__intro">${projects.length} placeholder projects: homes and workspaces shown to demonstrate a project gallery.</p>
   </div>
 
   <div class="limit">
@@ -341,7 +336,7 @@ export function projectsPage({ projects = [] } = {}) {
 
   return layout({
     title: `Inspiration — ${brand.name}`,
-    description: 'Twenty-six residential and commercial interiors furnished by Big Brain across Johor and the Klang Valley.',
+    description: 'Placeholder residential and commercial projects from the FF Furniture demo store.',
     body,
     projects,
     canonical: '/projects.html',
@@ -351,7 +346,7 @@ export function projectsPage({ projects = [] } = {}) {
 
 export function projectPage(project, { projects = [] } = {}) {
   const others = projects.filter((p) => p.slug !== project.slug).slice(0, 8);
-  const shots = project.images.map((_, i) => `project/${project.slug}/${String(i + 1).padStart(2, '0')}`).filter(has);
+  const shots = Array.from({ length: project.count }, (_, i) => `project/${project.slug}/${String(i + 1).padStart(2, '0')}`).filter(has);
 
   const body = `
 <div class="headspace">
@@ -412,18 +407,16 @@ export function aboutPage({ projects = [] } = {}) {
 
   <div class="limit">
     <div class="split">
-      <div class="split__media">${img('showroom/interior-02', { alt: 'Inside a Big Brain showroom', sizes: '(max-width: 767px) 100vw, 48vw', eager: true })}</div>
+      <div class="split__media">${img('showroom/two', { alt: 'A showroom interior', sizes: '(max-width: 767px) 100vw, 48vw', eager: true })}</div>
       <div class="split__body prose" style="grid-column:8 / span 5">
         ${copy.about.map((p) => `<p>${esc(p)}</p>`).join('\n        ')}
-        <h2 class="t-h3" id="trade">For the trade</h2>
-        <p>We collaborate with the best architecture studios, promoters, interior designers, and decorators. If you are specifying for a project, talk to us about lead times, fabric books and contract pricing.</p>
-        <a class="btn" style="margin-top:16px" href="${social.whatsapp}" target="_blank" rel="noopener">Talk to us</a>
+        <a class="btn" style="margin-top:16px" href="${brand.studioUrl}" target="_blank" rel="noopener">Visit FF Dev Studio</a>
       </div>
     </div>
   </div>
 
   ${banner({
-    heading: 'Old Wood, New Life',
+    heading: 'Made from Teak',
     body: copy.quote.text,
     cta: { label: 'Discover Materials', href: '/materials.html' },
     img: 'material/grain-macro',
@@ -436,14 +429,12 @@ export function aboutPage({ projects = [] } = {}) {
       <div class="grid-12 showroom-grid" style="row-gap:40px">
         ${showrooms.map((s) => `
         <div class="showroom-card">
-          ${img(s.img, { alt: `${s.city} showroom`, sizes: '(max-width: 767px) 100vw, 48vw' })}
-          <h3 class="t-h3">${esc(s.city)}</h3>
+          ${img(s.img, { alt: s.name, sizes: '(max-width: 767px) 100vw, 48vw' })}
+          <h3 class="t-h3">${esc(s.name)}</h3>
           <dl>
             <dt>Address</dt><dd>${esc(s.address)}</dd>
-            <dt>Hours</dt><dd>${esc(s.hours)}</dd>
             <dt>Telephone</dt><dd><a href="tel:${s.telHref}">${esc(s.tel)}</a></dd>
           </dl>
-          <a class="btn" href="${s.mapHref}" target="_blank" rel="noopener">Directions</a>
         </div>`).join('')}
       </div>
     </div>
@@ -452,11 +443,11 @@ export function aboutPage({ projects = [] } = {}) {
 
   return layout({
     title: `About Us — ${brand.name}`,
-    description: 'Big Brain is a creative home editor working in reclaimed teak, with showrooms in Johor Bahru and Petaling Jaya.',
+    description: 'FF Furniture is a demo furniture store built by FF Dev Studio. Everything on the site is placeholder content.',
     body,
     projects,
     canonical: '/about.html',
-    ogImage: 'showroom/interior-02',
+    ogImage: 'showroom/two',
   });
 }
 
@@ -469,9 +460,9 @@ export function materialsPage({ projects = [] } = {}) {
 
   <div class="limit">
     <div class="split">
-      <div class="split__media">${img('material/grain-macro', { alt: 'Reclaimed teak grain', sizes: '(max-width: 767px) 100vw, 48vw', eager: true })}</div>
+      <div class="split__media">${img('material/grain-macro', { alt: 'Close-up of teak grain', sizes: '(max-width: 767px) 100vw, 48vw', eager: true })}</div>
       <div class="split__body prose" style="grid-column:8 / span 5">
-        <h2 class="t-h3">Reclaimed Teak</h2>
+        <h2 class="t-h3">Teak</h2>
         ${copy.materials.map((p) => `<p>${esc(p)}</p>`).join('\n        ')}
       </div>
     </div>
@@ -480,7 +471,7 @@ export function materialsPage({ projects = [] } = {}) {
   <div class="limit">
     <div class="section--pad">
       <div class="gallery" data-reveal>
-        ${['material/titan-dining-table', 'material/sanding-by-hand', 'material/cross-leg-dining-table', 'material/stone-slabs', 'material/upholstery-stitching', 'showroom/workshop-tools']
+        ${['material/teak-table-top', 'material/sanding-by-hand', 'material/teak-table-corner', 'material/stone-slabs', 'material/upholstery-stitching', 'material/finish-samples']
     .filter(has).map((m) => `<figure>${img(m, { alt: '', sizes: '(max-width: 767px) 100vw, 33vw' })}</figure>`).join('\n        ')}
       </div>
     </div>
@@ -503,15 +494,15 @@ export function materialsPage({ projects = [] } = {}) {
   <div class="limit">
     <div class="section--pad" id="care" style="max-width:46em">
       <h2 class="t-h2">Care and maintenance</h2>
-      <p style="margin-top:16px;font-size:16px;line-height:26px">Wipe with a damp cloth and dry it. Re-oil a table top once or twice a year, more if it lives in the sun. Do not put reclaimed teak through a dishwasher, and do not leave it standing in water.</p>
-      <p style="margin-top:16px;font-size:16px;line-height:26px">Knots, cracks and colour shifts will keep moving for the first year in your house. That is the wood settling into a new humidity, not a fault.</p>
+      <p style="margin-top:16px;font-size:16px;line-height:26px">Wipe teak with a damp cloth and dry it. Oil a table top now and then, and keep wood out of the dishwasher and out of standing water.</p>
+      <p style="margin-top:16px;font-size:16px;line-height:26px">Placeholder text for the demo store.</p>
     </div>
   </div>
 </div>`;
 
   return layout({
     title: `Materials — ${brand.name}`,
-    description: 'Reclaimed teak, and the sixteen textures Big Brain’s carpenters can work into it.',
+    description: 'About teak, and a set of placeholder surface textures.',
     body,
     projects,
     canonical: '/materials.html',
@@ -530,15 +521,13 @@ export function contactPage({ projects = [] } = {}) {
     <div class="grid-12 showroom-grid" style="row-gap:48px">
       ${showrooms.map((s) => `
       <div class="showroom-card">
-        ${img(s.img, { alt: `${s.city} showroom`, sizes: '(max-width: 767px) 100vw, 48vw', eager: true })}
-        <h2 class="t-h3">${esc(s.region)} — ${esc(s.city)}</h2>
+        ${img(s.img, { alt: s.name, sizes: '(max-width: 767px) 100vw, 48vw', eager: true })}
+        <h2 class="t-h3">${esc(s.name)}</h2>
         <dl>
           <dt>Address</dt><dd>${esc(s.address)}</dd>
-          <dt>Opening hours</dt><dd>${esc(s.hours)}</dd>
           <dt>Telephone</dt><dd><a href="tel:${s.telHref}">${esc(s.tel)}</a></dd>
           <dt>Email</dt><dd><a href="mailto:${s.email}">${esc(s.email)}</a></dd>
         </dl>
-        <a class="btn" href="${s.mapHref}" target="_blank" rel="noopener">Directions</a>
       </div>`).join('')}
     </div>
   </div>
@@ -546,21 +535,21 @@ export function contactPage({ projects = [] } = {}) {
   <div class="limit">
     <div class="section--pad" id="delivery" style="max-width:46em">
       <h2 class="t-h2">Delivery</h2>
-      <p style="margin-top:16px;font-size:16px;line-height:26px">We deliver across Peninsular Malaysia. Delivery is quoted with the order, because a sofa and a serving spoon are not the same problem. Collection from either showroom is free.</p>
+      <p style="margin-top:16px;font-size:16px;line-height:26px">Placeholder text. This is a demo store: nothing is shipped and no order is fulfilled.</p>
       <h2 class="t-h2" style="margin-top:40px">Talk to us</h2>
-      <p style="margin-top:16px;font-size:16px;line-height:26px">WhatsApp is the fastest way to reach either showroom. Send the room, the measurements, or just a photo of what you like.</p>
-      <a class="btn btn--solid" style="margin-top:24px" href="${social.whatsapp}" target="_blank" rel="noopener">WhatsApp ${esc(social.whatsappNumber)}</a>
+      <p style="margin-top:16px;font-size:16px;line-height:26px">The addresses, phone numbers and email above are placeholders. The button below opens a WhatsApp chat with FF Dev Studio, who built this demo.</p>
+      <a class="btn btn--solid" style="margin-top:24px" href="${waLink('Hello from FF Furniture')}" target="_blank" rel="noopener">WhatsApp FF Dev Studio</a>
     </div>
   </div>
 </div>`;
 
   return layout({
     title: `Visit us — ${brand.name}`,
-    description: 'Big Brain showrooms in Johor Bahru and Petaling Jaya — addresses, opening hours and directions.',
+    description: 'Placeholder showroom addresses and contact details for the FF Furniture demo store.',
     body,
     projects,
     canonical: '/contact.html',
-    ogImage: 'showroom/johor-bahru',
+    ogImage: 'showroom/one',
   });
 }
 

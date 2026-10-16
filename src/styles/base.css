@@ -203,6 +203,9 @@ ul, ol { list-style: none; }
   overflow: hidden;
   background: var(--color-canvas);
 }
+/* A framed hero wraps the image's own .media in one that holds the aspect
+   ratio, so the inner one has to fill it rather than collapse to nothing. */
+.media > .media { position: absolute; inset: 0; }
 .media > picture,
 .media > img {
   position: absolute;

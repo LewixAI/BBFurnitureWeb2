@@ -131,7 +131,7 @@ export function initSort() {
   });
 }
 
-/* ── Newsletter (no backend yet: say so rather than pretend) ───────────── */
+/* ── Newsletter (demo: no backend, and it says so rather than pretend) ─── */
 export function initNewsletter() {
   document.querySelectorAll('[data-newsletter]').forEach((form) => {
     form.addEventListener('submit', (e) => {
@@ -141,7 +141,7 @@ export function initNewsletter() {
       if (!note) return;
       note.hidden = false;
       note.textContent = email
-        ? 'Thanks — we will be in touch. For anything urgent, WhatsApp is faster.'
+        ? 'This is a demo — your address was not saved.'
         : 'Please enter an email address.';
       if (email) form.reset();
     });

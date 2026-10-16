@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 # Publishes dist/ to the gh-pages branch, which is what GitHub Pages serves.
 #
-# The built site is ~350 MB of imagery, so it lives on its own orphan branch
-# rather than in main — `main` stays at ~1 MB of source and is regenerable with
-# `npm run organize && npm run images` (both read the sibling BBFurnitureWeb
-# checkout, which holds the client's originals).
+# The built site carries a lot of imagery, so it lives on its own orphan branch
+# rather than in main — `main` stays small source and is regenerable with
+# `npm run images` (which reads the local assets/library/ tree).
 #
-#   BASE_PATH=/BBFurnitureWeb2 npm run build && bash scripts/deploy-pages.sh
+#   BASE_PATH=/your-repo-name npm run build && bash scripts/deploy-pages.sh
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -15,7 +14,8 @@ STAGE=$(mktemp -d)
 trap 'rm -rf "$STAGE"' EXIT
 
 [ -d dist ] || { echo "dist/ missing — run the build first"; exit 1; }
-grep -q 'BBFurnitureWeb2/img' dist/index.html || {
+[ -n "${BASE_PATH:-}" ] || { echo "BASE_PATH is not set — every URL would 404 under the subpath"; exit 1; }
+grep -q "${BASE_PATH#/}/img" dist/index.html || {
   echo "dist/ was built without BASE_PATH — every URL would 404 under the subpath"; exit 1; }
 
 cp -a dist/. "$STAGE/"
